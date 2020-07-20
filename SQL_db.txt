@@ -1,0 +1,172 @@
+server: server112
+USER: Azuretest
+PASS: Azr14075
+
+cadena de conexión:
+Server=tcp:server112.database.windows.net,1433;Initial Catalog=AzureExamen;Persist Security Info=False;User ID=Azuretest;Password=Azr14075;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+
+_____________
+BASE DE DATOS|____________________________________________________________________________________________
+
+________________________________________
+________________TABLAS__________________|
+CREATE TABLE Sucursal
+(
+  IDSucursal INT PRIMARY KEY NOT NULL IDENTITY(1,1),
+  Nombre VARCHAR(50),
+  Fotografia TEXT,
+  IDSPosicion INT FOREIGN KEY REFERENCES Posicion (IDPosicion)
+);
+-----------------------------------------
+CREATE TABLE Posicion
+(
+  IDPosicion INT PRIMARY KEY NOT NULL IDENTITY(1,1),
+  Latitud FLOAT DEFAULT 0,
+  Longitud FLOAT DEFAULT 0,
+);
+-----------------------------------------
+CREATE TABLE Visita
+(
+  IDVisita INT PRIMARY KEY NOT NULL IDENTITY(1,1),
+  Fecha DATETIME,
+  Fotografia TEXT,
+  NombreSupervisor VARCHAR(50),
+  IDVPosicion INT FOREIGN KEY REFERENCES Posicion (IDPosicion)
+);
+-----------------------------------------
+____________________________________________________________________________________________________
+_________________________________________
+__________PROCESOS ALMACENADOS___________|
+_________________________________________
+-------------SUCURSAL CRUD---------------|
+_________________________________________|
+CREATE PROCEDURE getAllSucursal
+AS
+      BEGIN
+	 SELECT * FROM Sucursal INNER JOIN Posicion ON Sucursal.IDSPosicion = Posicion.IDPosicion
+      END
+-----------------------------------------
+
+CREATE PROCEDURE getByIdSucursal(
+@ID int)
+AS
+      BEGIN
+	 SELECT * FROM Sucursal INNER JOIN Posicion ON Sucursal.IDSPosicion = Posicion.IDPosicion WHERE IDSucursal = @ID
+      END
+-----------------------------------------
+
+CREATE PROCEDURE createSucursal(
+@_Nombre varchar(50),
+@_Fotografia text,
+@_Latitud float(30),
+@_Longitud float(30))
+AS
+      BEGIN
+         INSERT INTO Posicion(Latitud, Longitud) VALUES(@_Latitud, @_Longitud);
+         INSERT INTO Sucursal(Nombre, Fotografia, IDSPosicion) VALUES(@_Nombre, @_Fotografia, SCOPE_IDENTITY());
+      END
+-----------------------------------------
+
+CREATE PROCEDURE deleteSucursal(
+@ID int)
+AS
+    BEGIN
+	 DECLARE @posicionID AS int;
+	 SELECT @posicionID = IDSPosicion FROM Sucursal WHERE IDSucursal = @ID;
+
+
+         DELETE FROM Sucursal WHERE Sucursal.IDSucursal = @ID;
+         DELETE FROM Posicion WHERE Posicion.IDPosicion = @posicionID;
+      END
+-----------------------------------------
+
+CREATE PROCEDURE updateSucursal(
+    @ID int,
+    @_Nombre varchar(80),
+    @_Fotografia text,
+    @_Latitud float(30),
+    @_Longitud float(30)
+)
+AS
+      BEGIN
+	DECLARE @posicionID AS int;
+	SELECT @posicionID = IDSPosicion FROM Sucursal WHERE IDSucursal = @ID;
+         UPDATE [Posicion] SET          
+            Latitud = @_Latitud,
+            Longitud = @_Longitud    
+         WHERE IDPosicion = @posicionID;
+
+         UPDATE Sucursal SET 
+            Nombre = @_Nombre,
+            Fotografia = @_Fotografia
+         WHERE IDSucursal = @ID;
+      END
+
+
+_______________________________________
+-------------VISITA CRUD---------------|
+_______________________________________|
+CREATE PROCEDURE getAllVisita
+AS
+      BEGIN
+	 SELECT * FROM Visita INNER JOIN Posicion ON Visita.IDVPosicion = Posicion.IDPosicion
+      END
+-----------------------------------------
+
+CREATE PROCEDURE getByIdVisita(
+@ID int)
+AS
+      BEGIN
+	 SELECT * FROM Visita INNER JOIN Posicion ON Visita.IDVPosicion = Posicion.IDPosicion WHERE IDVisita = @ID
+      END
+-----------------------------------------
+
+CREATE PROCEDURE createVisita(
+@_Fecha DATETIME,
+@_Fotografia TEXT,
+@_NombreSup VARCHAR(30),
+@_Latitud FLOAT,
+@_Longitud FLOAT
+)
+AS
+      BEGIN
+         INSERT INTO Posicion(Latitud, Longitud) VALUES(@_Latitud, @_Longitud);
+         INSERT INTO Visita(Fecha, Fotografia, NombreSupervisor, IDVPosicion) VALUES(@_Fecha, @_Fotografia, @_NombreSup, SCOPE_IDENTITY());
+      END
+-----------------------------------------
+
+CREATE PROCEDURE deleteVisita(
+@ID int)
+AS
+    BEGIN
+	 DECLARE @posicionID AS int;
+	 SELECT @posicionID = IDVPosicion FROM Visita WHERE IDVisita = @ID;
+         DELETE FROM Posicion WHERE Posicion.IDPosicion = @posicionID;
+         DELETE FROM Visita WHERE Visita.IDVisita = @ID;
+    END
+-----------------------------------------
+
+CREATE PROCEDURE updateVisita(
+    @ID int,
+    @_Fecha DATETIME,
+    @_Fotografia TEXT,
+    @_NombreSup VARCHAR(30),
+    @_Latitud FLOAT,
+    @_Longitud FLOAT,
+)
+AS
+      BEGIN
+	DECLARE @posicionID AS int;
+	SELECT @posicionID = IDVPosicion FROM Visita WHERE IDVisita = @ID;
+         UPDATE [Posicion] SET          
+            Latitud = @_Latitud,
+            Longitud = @_Longitud    
+         WHERE IDPosicion = @posicionID;
+
+         UPDATE Visita SET 
+            Fecha = @_Fecha,
+            Fotografia = @_Fotografia,
+	    NombreSupervisor = @_NombreSup
+         WHERE IDVisita = @ID;
+      END
+-------------------------------------------------------------------

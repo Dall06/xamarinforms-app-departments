@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converter="clr-namespace:AppDepartmentManager.Converters"
+             mc:Ignorable="d"
+             x:Class="AppDepartmentManager.Views.VisitDetailPage">
+    
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Delete" Command="{Binding DeleteCommand}" >
+            <ToolbarItem.IconImageSource>
+                <OnPlatform
+                    x:TypeArguments="ImageSource">
+                    <On
+                        Platform="Android, UWP"
+                        Value="delete.png" />
+                </OnPlatform>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+        
+        <ToolbarItem Text="Edit" Command="{Binding EditCommand}" >
+            <ToolbarItem.IconImageSource>
+                <OnPlatform
+                    x:TypeArguments="ImageSource">
+                    <On
+                        Platform="Android, UWP"
+                        Value="edit.png" />
+                </OnPlatform>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+        
+        <ToolbarItem Text="Cancel" Command="{Binding CancelCommand}" >
+            <ToolbarItem.IconImageSource>
+                <OnPlatform
+                    x:TypeArguments="ImageSource">
+                    <On
+                        Platform="Android, UWP"
+                        Value="back.png" />
+                </OnPlatform>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converter:ImageConverter x:Key="ImageConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+        <ScrollView Margin="20" Padding="10" BackgroundColor="#0F1923">
+            <StackLayout
+                VerticalOptions="StartAndExpand" BackgroundColor="#0F1923">
+
+                <Image
+                    Source="{Binding Picture, Converter={StaticResource ImageConverter}}" />
+
+                <Label
+                    Text="Supervisor name: "
+                    TextColor="#5dc1b9"
+                    FontSize="Subtitle"
+                    FontAttributes="Bold"/>
+                <Label
+                    TextColor="White"
+                    FontSize="Body"
+                    Text="{Binding Supervisor}" />
+                <Label
+                    Text="Latitude: "
+                    TextColor="#5dc1b9"
+                    FontSize="Subtitle"
+                    FontAttributes="Bold"/>
+                <Label
+                    TextColor="White"
+                    FontSize="Body"
+                    Text="{Binding Latitude}" />
+
+                <Label
+                    Text="Longitude:"
+                    TextColor="#5dc1b9"
+                    FontSize="Subtitle"
+                    FontAttributes="Bold"/>
+                <Label
+                    TextColor="White"
+                    FontSize="Body"
+                    Text="{Binding Longitude}" />
+
+                <Label
+                    Text="Date: "
+                    TextColor="#5dc1b9"
+                    FontSize="Subtitle"
+                    FontAttributes="Bold"/>
+                <Label
+                    TextColor="White"
+                    FontSize="Body"
+                    Text="{Binding Date}" />
+
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>
